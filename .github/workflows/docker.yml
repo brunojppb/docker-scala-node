@@ -29,4 +29,4 @@ jobs:
 
       - name: docker build
         run: |
-          docker buildx build --file Dockerfile.base --platform linux/arm64,linux/amd64 -t brunojppb/base-sbt:latest --push
+          docker buildx build --platform linux/arm64,linux/amd64 -t brunojppb/base-sbt:latest --push - < Dockerfile.base
