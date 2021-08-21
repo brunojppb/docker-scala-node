@@ -1,12 +1,17 @@
-FROM openjdk:8-jre-slim
+FROM openjdk:8u292
 LABEL maintainer="hey@bpaulino.com"
 
-RUN apt update
-RUN apt install wget postgresql-client ca-certificates bash curl jq tar
-# Install SBT
-RUN export PATH="/usr/local/sbt/bin:$PATH" \
-  && mkdir -p "/usr/local/sbt" \
-  && wget -qO - --no-check-certificate "https://piccolo.link/sbt-1.3.10.tgz" | tar xz -C /usr/local/sbt --strip-components=1 \
-  && sbt sbtVersion
+ARG SBT_VERSION=1.3.10
 
-ENV PATH "/usr/local/sbt/bin:$PATH"
+# Install sbt
+RUN \
+  mkdir /working/ && \
+  cd /working/ && \
+  curl -L -o sbt-$SBT_VERSION.deb https://repo.scala-sbt.org/scalasbt/debian/sbt-$SBT_VERSION.deb && \
+  dpkg -i sbt-$SBT_VERSION.deb && \
+  rm sbt-$SBT_VERSION.deb && \
+  apt-get update && \
+  apt-get install wget postgresql-client ca-certificates sbt -y && \
+  cd && \
+  rm -r /working/ && \
+  sbt sbtVersion
